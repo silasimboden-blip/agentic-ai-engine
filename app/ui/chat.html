@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic AI Engineering – Chat</title>
+  <link rel="stylesheet" href="/static/css/chat.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">&#9776;</button>
+    <h1>&#129302; Agentic AI Engineering</h1>
+    <div class="status">
+      <div class="dot" id="status-dot"></div>
+      <span id="status-text">Disconnected</span>
+    </div>
+    <div class="session-info">
+      <span id="session-id"></span>
+      <button id="new-session-btn" onclick="requestNewSession()" title="Start a new session">New Session</button>
+    </div>
+  </header>
+
+  <div class="app-body">
+
+    <!-- Sidebar overlay for mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <nav class="sidebar-nav">
+        <button class="sidebar-nav-btn active" data-tab="agents" onclick="switchSidebarTab('agents')" title="Agents">
+          <span class="nav-icon">🤖</span><span class="nav-label">Agents</span>
+        </button>
+        <button class="sidebar-nav-btn" data-tab="artifacts" id="artifacts-tab-btn" onclick="switchSidebarTab('artifacts')" style="display:none" title="Artifacts">
+          <span class="nav-icon">📎</span><span class="nav-label">Artifacts</span>
+        </button>
+        <button class="sidebar-nav-btn" data-tab="memory" id="memory-tab-btn" onclick="switchSidebarTab('memory')" style="display:none" title="Memory">
+          <span class="nav-icon">🧠</span><span class="nav-label">Memory</span>
+        </button>
+        <button class="sidebar-nav-btn" data-tab="rag" id="rag-tab-btn" onclick="switchSidebarTab('rag')" style="display:none" title="RAG Documents">
+          <span class="nav-icon">🗂️</span><span class="nav-label">RAG Docs</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-panel" id="panel-agents">
+        <ul id="agent-list">
+          <!-- Populated dynamically from /api/agents -->
+        </ul>
+      </div>
+
+      <div class="sidebar-panel" id="panel-artifacts" style="display:none">
+        <div class="current-agent-badge" id="artifact-agent-badge"></div>
+        <div id="artifact-list" class="artifact-list">
+          <p class="artifact-empty">No artifacts yet.</p>
+        </div>
+      </div>
+
+      <div class="sidebar-panel" id="panel-memory" style="display:none">
+        <div class="current-agent-badge" id="memory-agent-badge"></div>
+        <div id="memory-list" class="memory-list">
+          <p class="memory-empty">No memory facts yet.</p>
+        </div>
+      </div>
+
+      <div class="sidebar-panel" id="panel-rag" style="display:none">
+        <div class="current-agent-badge" id="rag-agent-badge"></div>
+        <div class="rag-import-bar">
+          <input type="text" id="rag-gcs-input" placeholder="gs://bucket/path/to/file.pdf" />
+          <button id="rag-import-btn" onclick="importRagFile()">Import</button>
+        </div>
+        <div id="rag-file-list" class="rag-file-list">
+          <p class="rag-empty">No documents yet.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Resize handle -->
+    <div class="sidebar-resize-handle" id="sidebar-resize-handle"></div>
+
+    <!-- Chat area -->
+    <div class="chat-main">
+      <div id="chat-container">
+      </div>
+
+      <div class="typing-indicator" id="typing">
+        Agent is thinking<span>.</span><span>.</span><span>.</span>
+      </div>
+
+      <div id="file-preview-bar" class="file-preview-bar"></div>
+
+      <div id="input-area">
+        <input type="file" id="file-input" multiple hidden />
+        <button id="upload-btn" class="icon-btn" onclick="document.getElementById('file-input').click()" title="Attach files">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
+          </svg>
+        </button>
+        <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" />
+        <button id="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- New-session confirmation modal -->
+  <div id="confirm-modal" class="modal-overlay">
+    <div class="modal-box">
+      <p class="modal-message">The current session and its conversation history will be deleted. Start a new session?</p>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="modal-btn modal-btn-cancel">Cancel</button>
+        <button id="modal-confirm" class="modal-btn modal-btn-confirm">New Session</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/chat.js"></script>
+</body>
+</html>
