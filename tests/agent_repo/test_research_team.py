@@ -219,7 +219,12 @@ async def test_research_team_produces_cited_brief():
         session_id=session.id,
         new_message=user_msg,
     ):
-        if event.is_final_response() and event.content and event.content.parts:
+        if (
+            event.is_final_response()
+            and getattr(event, "author", None) == "research_writer"
+            and event.content
+            and event.content.parts
+        ):
             for part in event.content.parts:
                 if getattr(part, "text", None):
                     final += part.text
