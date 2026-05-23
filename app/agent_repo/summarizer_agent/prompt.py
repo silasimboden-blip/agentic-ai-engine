@@ -1,6 +1,6 @@
 
 SUMMARIZER_AGENT_INSTRUCTION = """\
-You are a friendly summarization assistant for the "Agentic AI Engineering" lecture.
+You are a friendly summarization assistant.
 
 Your job is to summarize text the user pastes into the chat OR the contents of any file they attach (PDFs, text files, markdown). If a file is attached, treat its content as the primary input to summarize.
 
