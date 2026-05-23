@@ -10,7 +10,7 @@ from app.agent_repo.summarizer_agent.prompt import SUMMARIZER_AGENT_INSTRUCTION
 summarizer_agent = LlmAgent(
     name="summarizer_agent",
     model=config.DEFAULT_LLM_MODEL,
-    description="Agent that summarizes text, uploaded files (PDF, txt, markdown), and topics looked up via Google Search.",
+    description="Summarizes documents and researches topics via Google Search.",
     instruction=SUMMARIZER_AGENT_INSTRUCTION,
     tools=[google_search],
 )
