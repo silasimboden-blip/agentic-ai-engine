@@ -167,3 +167,27 @@ def test_researcher_tools_include_mcp_when_configured(monkeypatch):
     monkeypatch.setattr(agent_module.config, "MCP_FETCH_URL", "http://localhost:8765/mcp")
     tools = agent_module._researcher_tools()
     assert len(tools) == 2
+
+
+# ---------------------------------------------------------------------------
+# Section 4: registry tests
+# ---------------------------------------------------------------------------
+
+from app.agent_repo.agent_registry import AGENT_REGISTRY, get_agent, list_agents
+
+
+def test_research_team_registered():
+    assert "research_team" in AGENT_REGISTRY
+
+
+def test_get_agent_returns_research_team_instance():
+    assert get_agent("research_team") is research_team
+
+
+def test_list_agents_includes_research_team_metadata():
+    metas = list_agents()
+    entry = next((m for m in metas if m["id"] == "research_team"), None)
+    assert entry is not None
+    assert entry["label"] == "Research"
+    assert entry["icon"] == "🔍"
+    assert "research" in entry["description"].lower()

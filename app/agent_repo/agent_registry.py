@@ -11,6 +11,7 @@ from google.adk.tools import AgentTool
 
 from app.agent_repo.greeting_agent import greeting_agent
 from app.agent_repo.summarizer_agent import summarizer_agent
+from app.agent_repo.research_team import research_team
 
 """
 from app.context.artifacts.artifact_tools import save_artifact, load_artifact, list_artifacts
@@ -36,6 +37,12 @@ AGENT_REGISTRY: dict[str, dict] = {
         "label": "Summarize",
         "description": "Summarizes text, uploaded files (PDF, txt, markdown), and topics looked up via Google Search.",
         "icon": "📝",
+    },
+    "research_team": {
+        "agent": research_team,
+        "label": "Research",
+        "description": "Multi-agent team that researches a question and writes a cited brief.",
+        "icon": "🔍",
     },
 }
 
