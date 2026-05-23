@@ -108,3 +108,62 @@ def test_writer_references_all_four_keys_and_format():
     for key in ("{research_plan}", "{research_a}", "{research_b}", "{critique}"):
         assert key in WRITER_INSTRUCTION
     assert "## Sources" in WRITER_INSTRUCTION
+
+
+# ---------------------------------------------------------------------------
+# Section 3: agent wiring tests
+# ---------------------------------------------------------------------------
+
+from google.adk.agents import LlmAgent, ParallelAgent, SequentialAgent
+
+from app.agent_repo.research_team import agent as agent_module
+from app.agent_repo.research_team import research_team
+
+
+def test_research_team_is_sequential_with_four_stages():
+    assert isinstance(research_team, SequentialAgent)
+    assert research_team.name == "research_team"
+    assert len(research_team.sub_agents) == 4
+
+
+def test_research_team_stage_types_and_names():
+    coord, researchers, critic, writer = research_team.sub_agents
+    assert isinstance(coord, LlmAgent) and coord.name == "research_coordinator"
+    assert isinstance(researchers, ParallelAgent) and researchers.name == "researchers"
+    assert len(researchers.sub_agents) == 2
+    a, b = researchers.sub_agents
+    assert isinstance(a, LlmAgent) and a.name == "researcher_a"
+    assert isinstance(b, LlmAgent) and b.name == "researcher_b"
+    assert isinstance(critic, LlmAgent) and critic.name == "research_critic"
+    assert isinstance(writer, LlmAgent) and writer.name == "research_writer"
+
+
+def test_coordinator_and_critic_have_output_keys():
+    coord = research_team.sub_agents[0]
+    critic = research_team.sub_agents[2]
+    assert coord.output_key == "research_plan"
+    assert critic.output_key == "critique"
+
+
+def test_researchers_have_output_keys():
+    researchers = research_team.sub_agents[1]
+    a, b = researchers.sub_agents
+    assert a.output_key == "research_a"
+    assert b.output_key == "research_b"
+
+
+def test_writer_has_no_output_key():
+    writer = research_team.sub_agents[3]
+    assert getattr(writer, "output_key", None) in (None, "")
+
+
+def test_researcher_tools_search_only_when_mcp_disabled(monkeypatch):
+    monkeypatch.setattr(agent_module.config, "MCP_FETCH_URL", "")
+    tools = agent_module._researcher_tools()
+    assert len(tools) == 1
+
+
+def test_researcher_tools_include_mcp_when_configured(monkeypatch):
+    monkeypatch.setattr(agent_module.config, "MCP_FETCH_URL", "http://localhost:8765/mcp")
+    tools = agent_module._researcher_tools()
+    assert len(tools) == 2
