@@ -10,6 +10,7 @@ from google.adk.agents import LlmAgent
 from google.adk.tools import AgentTool
 
 from app.agent_repo.greeting_agent import greeting_agent
+from app.agent_repo.summarizer_agent import summarizer_agent
 
 """
 from app.context.artifacts.artifact_tools import save_artifact, load_artifact, list_artifacts
@@ -29,6 +30,12 @@ AGENT_REGISTRY: dict[str, dict] = {
         "label": "Welcome",
         "description": "Welcomes students and helps them get started.",
         "icon": "👋",
+    },
+    "summarizer_agent": {
+        "agent": summarizer_agent,
+        "label": "Summarize",
+        "description": "Summarizes text or uploaded files (PDF, txt).",
+        "icon": "📝",
     },
 }
 
