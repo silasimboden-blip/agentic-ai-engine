@@ -34,7 +34,7 @@ AGENT_REGISTRY: dict[str, dict] = {
     "summarizer_agent": {
         "agent": summarizer_agent,
         "label": "Summarize",
-        "description": "Summarizes text or uploaded files (PDF, txt, markdown).",
+        "description": "Summarizes text, uploaded files (PDF, txt, markdown), and topics looked up via Google Search.",
         "icon": "📝",
     },
 }
