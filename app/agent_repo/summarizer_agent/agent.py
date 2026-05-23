@@ -5,6 +5,7 @@ from google.adk.tools.google_search_agent_tool import (
     GoogleSearchAgentTool,
     create_google_search_agent,
 )
+from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
 
 from app import config
 from app.agent_repo.summarizer_agent.prompt import SUMMARIZER_AGENT_INSTRUCTION
@@ -17,10 +18,20 @@ _search_sub_agent = create_google_search_agent(model=config.DEFAULT_LLM_MODEL)
 _google_search_tool = GoogleSearchAgentTool(_search_sub_agent)
 
 
+_tools: list = [_google_search_tool]
+
+if config.MCP_FETCH_URL:
+    _tools.append(
+        McpToolset(
+            connection_params=StreamableHTTPConnectionParams(url=config.MCP_FETCH_URL),
+        )
+    )
+
+
 summarizer_agent = LlmAgent(
     name="summarizer_agent",
     model=config.DEFAULT_LLM_MODEL,
-    description="Summarizes documents and researches topics via Google Search.",
+    description="Summarizes documents and researches topics via Google Search and direct URL fetch.",
     instruction=SUMMARIZER_AGENT_INSTRUCTION,
-    tools=[_google_search_tool],
+    tools=_tools,
 )

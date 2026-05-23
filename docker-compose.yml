@@ -1,0 +1,12 @@
+services:
+  web_fetch_mcp:
+    build: ./app/mcp_servers/web_fetch
+    container_name: web_fetch_mcp
+    ports:
+      - "8765:8765"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8765/mcp', timeout=2).status in (200,404,405,406) else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

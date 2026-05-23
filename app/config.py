@@ -52,7 +52,8 @@ AGENT_ENGINE_ID: str = os.getenv("AGENT_ENGINE_ID", "")
 # Location for Memory Bank / ReasoningEngine (not available in all regions)
 MEMORY_BANK_LOCATION: str = os.getenv("MEMORY_BANK_LOCATION", "us-central1")
 
-# MCP Fetch server URL (SSE endpoint). Set to empty to use the inline fetch_url tool instead.
+# MCP Fetch server URL (Streamable HTTP endpoint, e.g. http://localhost:8765/mcp).
+# When empty, the summarizer agent runs without the fetch_url tool.
 MCP_FETCH_URL: str = os.getenv("MCP_FETCH_URL", "")
 
 # Session backend: "VERTEX" for VertexAiSessionService, "IN_MEMORY" for InMemorySessionService.
