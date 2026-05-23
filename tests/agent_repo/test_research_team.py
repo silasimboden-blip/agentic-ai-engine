@@ -191,3 +191,40 @@ def test_list_agents_includes_research_team_metadata():
     assert entry["label"] == "Research"
     assert entry["icon"] == "🔍"
     assert "research" in entry["description"].lower()
+
+
+# ---------------------------------------------------------------------------
+# Section 5: integration smoke (requires GCP creds + optional MCP server)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.integration
+async def test_research_team_produces_cited_brief():
+    """Drive the full team on a known-good question and validate output shape."""
+    from google.adk.runners import InMemoryRunner
+    from google.genai.types import Content, Part
+
+    runner = InMemoryRunner(agent=research_team, app_name="test_research_team")
+    session = await runner.session_service.create_session(
+        app_name="test_research_team",
+        user_id="test_user",
+    )
+    user_msg = Content(
+        role="user",
+        parts=[Part.from_text(text="What is retrieval-augmented generation?")],
+    )
+
+    final = ""
+    async for event in runner.run_async(
+        user_id="test_user",
+        session_id=session.id,
+        new_message=user_msg,
+    ):
+        if event.is_final_response() and event.content and event.content.parts:
+            for part in event.content.parts:
+                if getattr(part, "text", None):
+                    final += part.text
+
+    assert "## Sources" in final
+    # at least three bullets — markdown dash bullets at column 0
+    bullet_count = sum(1 for line in final.splitlines() if line.startswith("- "))
+    assert bullet_count >= 3, f"expected >=3 bullets, got {bullet_count}; output:\n{final}"

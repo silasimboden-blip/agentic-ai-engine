@@ -67,6 +67,10 @@ disallow_untyped_defs = false
 testpaths = ["tests"]
 python_files = "test_*.py"
 addopts = "-v --cov=app --cov-report=html"
+markers = [
+    "integration: end-to-end tests that require GCP credentials and live LLM calls (skipped by default with -m 'not integration')",
+]
+asyncio_mode = "auto"
 
 [tool.setuptools.packages.find]
 where = ["app", "scripts", "tests"]
