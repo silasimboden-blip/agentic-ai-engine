@@ -38,6 +38,11 @@ def test_source_defaults_to_empty_title_and_snippet():
     assert s.snippet == ""
 
 
+def test_source_requires_url():
+    with pytest.raises(ValidationError):
+        Source()  # url is required
+
+
 def test_research_output_defaults_to_empty_sources():
     r = ResearchOutput(findings="something")
     assert r.findings == "something"
